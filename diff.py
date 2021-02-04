@@ -34,8 +34,8 @@ def new_company_added(company):
         by = f' by {by_handles}'
 
     with deps.MONGO.start_session() as session, session.start_transaction():
-        if not deps.MONGO_DB['company_tweets'].find_one({'id': company['id']}, session=session):
-            deps.MONGO_DB['company_tweets'].insert_one({'id': company['id']}, session=session)
+        if not deps.MONGO_DB['company_posts'].find_one({'id': company['id']}, session=session):
+            deps.MONGO_DB['company_posts'].insert_one({'id': company['id']}, session=session)
             print(deps.IFTTT.publish_twitter(
                 f'{company["data"]["name"]}{by} has just been added to {company["batch"]} batch<br><br>'
                 f'More info: https://www.ycombinator.com/companies/{company["id"]}')
