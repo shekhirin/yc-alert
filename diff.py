@@ -22,30 +22,36 @@ def handler(event, context):
 
 
 def new_company_added(company):
-    founder_twitters = [f'<a href="{z}">@{urlpath.URL(z).parts[1]}</a>' for x in company['data']['founders'] for y, z in
-                        x['social_links'].items() if y == 'twitter']
-
-    by = ''
-    if len(founder_twitters) > 0:
-        if len(founder_twitters) == 1:
-            by_handles = founder_twitters[0]
-        else:
-            by_handles = ', '.join(founder_twitters[:-1]) + ' and ' + founder_twitters[-1]
-        by = f' by {by_handles}'
+    by_telegram = by([f'<a href="{z}">@{urlpath.URL(z).parts[1]}</a>' for x in company['data']['founders']
+                                 for y, z in x['social_links'].items() if y == 'twitter'])
+    by_twitter = by([f'@{urlpath.URL(z).parts[1]}' for x in company['data']['founders'] for y, z in
+                                x['social_links'].items() if y == 'twitter'])
 
     with deps.MONGO.start_session() as session, session.start_transaction():
         if not deps.MONGO_DB['company_posts'].find_one({'id': company['id']}, session=session):
             deps.MONGO_DB['company_posts'].insert_one({'id': company['id']}, session=session)
             print(deps.IFTTT.publish_twitter(
-                f'{company["data"]["name"]}{by} has just been added to {company["batch"]} batch<br><br>'
+                f'{company["data"]["name"]}{by_twitter} has just been added to {company["batch"]} batch<br><br>'
                 f'More info: https://www.ycombinator.com/companies/{company["id"]}')
             )
 
             print(deps.IFTTT.publish_telegram(
-                f'<a href="{company["data"]["links"][0]}">{company["data"]["name"]}</a>{by} '
+                f'<a href="{company["data"]["links"][0]}">{company["data"]["name"]}</a>{by_telegram} '
                 f'has just been added to {company["batch"]} batch<br><br>'
                 f'More info: https://www.ycombinator.com/companies/{company["id"]}')
             )
+
+
+def by(twitters):
+    result = ''
+    if len(twitters) > 0:
+        if len(twitters) == 1:
+            by_handles = twitters[0]
+        else:
+            by_handles = ', '.join(twitters[:-1]) + ' and ' + twitters[-1]
+        result = f' by {by_handles}'
+
+    return result
 
 
 def send(kind, previous, current, include_previous=False, include_current=False):
