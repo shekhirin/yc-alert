@@ -1,0 +1,82 @@
+service: yc-alerts
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: python3.8
+  timeout: 20
+  environment:
+    ALGOLIA_APPLICATION_ID: 45BWZJ1SGC
+    ALGOLIA_API_KEY: NDYzYmNmMTRjYzU4MDE0ZWY0MTVmMTNiYzcwYzMyODFlMjQxMWI5YmZkMjEwMDAxMzE0OTZhZGZkNDNkYWZjMHJlc3RyaWN0SW5kaWNlcz0lNUIlMjJZQ0NvbXBhbnlfcHJvZHVjdGlvbiUyMiU1RCZ0YWdGaWx0ZXJzPSU1QiUyMiUyMiU1RCZhbmFseXRpY3NUYWdzPSU1QiUyMnljZGMlMjIlNUQ=
+    MONGO_URL: ${ssm:/yc-alerts-mongo-url~true}
+    IFTTT_TOKEN: ${ssm:/yc-alerts-ifttt-token~true}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+      Resource:
+        - Fn::GetAtt: [ BatchesQueue, Arn ]
+        - Fn::GetAtt: [ CompaniesQueue, Arn ]
+        - Fn::GetAtt: [ DiffsQueue, Arn ]
+
+functions:
+  search:
+    handler: search.handler
+    events:
+      - schedule: rate(30 minutes)
+    environment:
+      BATCHES_SQS_URL:
+        Ref: BatchesQueue
+      DIFFS_SQS_URL:
+        Ref: DiffsQueue
+  batch:
+    handler: batch.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [ BatchesQueue, Arn ]
+          batchSize: 1
+    environment:
+      COMPANIES_SQS_URL:
+        Ref: CompaniesQueue
+      DIFFS_SQS_URL:
+        Ref: DiffsQueue
+  company:
+    handler: company.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [ CompaniesQueue, Arn ]
+          batchSize: 1
+    environment:
+      DIFFS_SQS_URL:
+        Ref: DiffsQueue
+  diff:
+    handler: diff.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [ DiffsQueue, Arn ]
+          batchSize: 1
+
+resources:
+  Resources:
+    BatchesQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: Batches
+    CompaniesQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: Companies
+    DiffsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: Diffs
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux

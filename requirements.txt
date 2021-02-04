@@ -1,0 +1,8 @@
+algoliasearch==2.4.0
+pymongo[srv]==3.11.2
+boto3==1.16.63
+boto3-stubs[essential]==1.16.63.0
+beautifulsoup4==4.9.3
+dictdiffer==0.8.1
+requests==2.25.1
+urlpath==1.1.7
