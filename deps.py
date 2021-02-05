@@ -17,12 +17,20 @@ SQS: SQSClient = boto3.client('sqs')
 
 class IFTTT:
     @staticmethod
-    def publish_telegram(text):
+    def publish_telegram_alert(text):
         return IFTTT.__publish('yc_alerts_telegram', text)
 
     @staticmethod
-    def publish_twitter(text):
+    def publish_twitter_alert(text):
         return IFTTT.__publish('yc_alerts_twitter', text)
+
+    @staticmethod
+    def publish_telegram_change(text):
+        return IFTTT.__publish('yc_alerts_telegram_change', text)
+
+    @staticmethod
+    def publish_twitter_change(text):
+        return IFTTT.__publish('yc_alerts_twitter_change', text)
 
     @staticmethod
     def __publish(trigger, text):

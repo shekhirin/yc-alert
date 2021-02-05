@@ -68,7 +68,12 @@ def handler(event, context):
                     'social_links': extract_social_links(x.find('div', class_='social-links'))
                 } for x in founders_info], key=lambda x: x['name']))
 
-            print(previous_company, current_company)
+            if job_openings := content.find('table', class_='job-openings'):
+                current_company['data']['jobs'] = [{
+                    'title': x.find('td', class_='job-title').text,
+                    'location': x.find('td', class_='job-location').text,
+                    'apply': x.find('td', class_='job-apply').find('a')['href']
+                } for x in job_openings.find_all('tr')]
 
             if previous_company != current_company:
                 diff.send(diff.COMPANY, previous_company, current_company, include_current=True)
