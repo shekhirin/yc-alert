@@ -29,19 +29,24 @@ def new_company_added(company):
     by_twitter = by([f'@{urlpath.URL(z).parts[1]}' for x in company['data']['founders'] for y, z in
                      x['social_links'].items() if y == 'twitter'])
 
+    publish = False
+
     with deps.MONGO.start_session() as session, session.start_transaction():
         if not deps.MONGO_DB['company_posts'].find_one({'id': company['id']}, session=session):
             deps.MONGO_DB['company_posts'].insert_one({'id': company['id']}, session=session)
-            print(deps.IFTTT.publish_twitter_alert(
-                f'{company["data"]["name"]}{by_twitter} has just been added to {company["batch"]} batch<br><br>'
-                f'More info: https://www.ycombinator.com/companies/{company["id"]}')
-            )
+            publish = True
 
-            print(deps.IFTTT.publish_telegram_alert(
-                f'<a href="{company["data"]["links"][0]}">{company["data"]["name"]}</a>{by_telegram} '
-                f'has just been added to {company["batch"]} batch<br><br>'
-                f'More info: https://www.ycombinator.com/companies/{company["id"]}')
-            )
+    if publish:
+        print(deps.IFTTT.publish_twitter_alert(
+            f'{company["data"]["name"]}{by_twitter} has just been added to {company["batch"]} batch<br><br>'
+            f'More info: https://www.ycombinator.com/companies/{company["id"]}')
+        )
+
+        print(deps.IFTTT.publish_telegram_alert(
+            f'<a href="{company["data"]["links"][0]}">{company["data"]["name"]}</a>{by_telegram} '
+            f'has just been added to {company["batch"]} batch<br><br>'
+            f'More info: https://www.ycombinator.com/companies/{company["id"]}')
+        )
 
 
 def by(twitters):
