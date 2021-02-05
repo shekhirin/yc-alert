@@ -23,9 +23,9 @@ def handler(event, context):
 
 def new_company_added(company):
     by_telegram = by([f'<a href="{z}">@{urlpath.URL(z).parts[1]}</a>' for x in company['data']['founders']
-                                 for y, z in x['social_links'].items() if y == 'twitter'])
+                      for y, z in x['social_links'].items() if y == 'twitter'])
     by_twitter = by([f'@{urlpath.URL(z).parts[1]}' for x in company['data']['founders'] for y, z in
-                                x['social_links'].items() if y == 'twitter'])
+                     x['social_links'].items() if y == 'twitter'])
 
     with deps.MONGO.start_session() as session, session.start_transaction():
         if not deps.MONGO_DB['company_posts'].find_one({'id': company['id']}, session=session):
