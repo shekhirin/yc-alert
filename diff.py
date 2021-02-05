@@ -19,7 +19,7 @@ def handler(event, context):
             if not data['previous']:
                 new_company_added(data['current'])
             elif data['diff']:
-                # TODO: publish company changes using IFTT.publish_telegram_alert and IFTT.publish_twitter_alert
+                # TODO: publish company changes using IFTTT.publish_telegram_alert and IFTTT.publish_twitter_alert
                 print('COMPANY_DIFF', data['current']['id'], data['diff'])
 
 
