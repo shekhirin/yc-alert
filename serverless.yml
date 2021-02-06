@@ -4,7 +4,7 @@ frameworkVersion: '2'
 provider:
   name: aws
   runtime: python3.8
-  timeout: 20
+  timeout: 60
   environment:
     ALGOLIA_APPLICATION_ID: 45BWZJ1SGC
     ALGOLIA_API_KEY: NDYzYmNmMTRjYzU4MDE0ZWY0MTVmMTNiYzcwYzMyODFlMjQxMWI5YmZkMjEwMDAxMzE0OTZhZGZkNDNkYWZjMHJlc3RyaWN0SW5kaWNlcz0lNUIlMjJZQ0NvbXBhbnlfcHJvZHVjdGlvbiUyMiU1RCZ0YWdGaWx0ZXJzPSU1QiUyMiUyMiU1RCZhbmFseXRpY3NUYWdzPSU1QiUyMnljZGMlMjIlNUQ=
