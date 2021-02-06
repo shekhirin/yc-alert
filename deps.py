@@ -17,23 +17,23 @@ SQS: SQSClient = boto3.client('sqs')
 
 class IFTTT:
     @staticmethod
-    def publish_alert_telegram(text):
+    def publish_alert_telegram(text: str):
         return IFTTT.__publish('yc_alerts_telegram', text)
 
     @staticmethod
-    def publish_alert_twitter(text):
+    def publish_alert_twitter(text: str):
         return IFTTT.__publish('yc_alerts_twitter', text)
 
     @staticmethod
-    def publish_change_telegram(text):
+    def publish_change_telegram(text: str):
         return IFTTT.__publish('yc_alerts_change_telegram', text)
 
     @staticmethod
-    def publish_change_twitter(text):
+    def publish_change_twitter(text: str):
         return IFTTT.__publish('yc_alerts_change_twitter', text)
 
     @staticmethod
-    def __publish(trigger, text):
+    def __publish(trigger: str, text: str):
         return requests.post(
             f'https://maker.ifttt.com/trigger/{trigger}/with/key/{os.getenv("IFTTT_TOKEN")}',
             json={'value1': text}

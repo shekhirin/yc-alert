@@ -4,6 +4,8 @@ import os
 import dictdiffer
 import urlpath
 
+import alert
+import change
 import deps
 
 FACETS = 'FACETS'
@@ -17,20 +19,18 @@ def handler(event, context):
 
         print(f'{data["kind"]}: {data["diff"]}')
 
+        previous_company = dictdiffer.revert(data['diff'], data['current'])
+
         if data['kind'] == COMPANY:
-            if not data['previous']:
+            if not previous_company:
                 new_company_added(data['current'])
             elif data['diff']:
-                # TODO: publish company changes using IFTTT.publish_telegram_change and IFTTT.publish_twitter_change
-                print('COMPANY_DIFF', data['current']['id'], data['diff'])
+                for message in change.generate_telegram(data['diff'], previous_company, data['current']):
+                    print(deps.IFTTT.publish_change_telegram(message))
+
 
 
 def new_company_added(company):
-    by_telegram = by([f'<a href="{z}">@{urlpath.URL(z).parts[1]}</a>' for x in company['data']['founders']
-                      for y, z in x['social_links'].items() if y == 'twitter'])
-    by_twitter = by([f'@{urlpath.URL(z).parts[1]}' for x in company['data']['founders'] for y, z in
-                     x['social_links'].items() if y == 'twitter'])
-
     publish = False
 
     with deps.MONGO.start_session() as session, session.start_transaction():
@@ -39,31 +39,11 @@ def new_company_added(company):
             publish = True
 
     if publish:
-        print(deps.IFTTT.publish_alert_twitter(
-            f'{company["data"]["name"]}{by_twitter} has just been added to {company["batch"]} batch<br><br>'
-            f'More info: https://www.ycombinator.com/companies/{company["id"]}')
-        )
-
-        print(deps.IFTTT.publish_alert_telegram(
-            f'<a href="{company["data"]["links"][0]}">{company["data"]["name"]}</a>{by_telegram} '
-            f'has just been added to {company["batch"]} batch<br><br>'
-            f'More info: https://www.ycombinator.com/companies/{company["id"]}')
-        )
+        print(deps.IFTTT.publish_alert_twitter(alert.generate_twitter(company)))
+        print(deps.IFTTT.publish_alert_telegram(alert.generate_telegram(company)))
 
 
-def by(twitters):
-    result = ''
-    if len(twitters) > 0:
-        if len(twitters) == 1:
-            by_handles = twitters[0]
-        else:
-            by_handles = ', '.join(twitters[:-1]) + ' and ' + twitters[-1]
-        result = f' by {by_handles}'
-
-    return result
-
-
-def send(kind, previous, current, include_previous=False, include_current=False):
+def send(kind, previous, current):
     diff = None
     try:
         diff = list(dictdiffer.diff(previous, current))
@@ -74,8 +54,7 @@ def send(kind, previous, current, include_previous=False, include_current=False)
         QueueUrl=os.getenv('DIFFS_SQS_URL'),
         MessageBody=json.dumps({
             'kind': kind,
-            'previous': previous if not previous or include_previous else 'exists',
-            'current': current if not current or include_current else 'exists',
+            'current': current,
             'diff': diff
         })
     )

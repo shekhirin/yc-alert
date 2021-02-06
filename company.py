@@ -15,7 +15,26 @@ def handler(event, context):
         page = BeautifulSoup(requests.get(f'https://www.ycombinator.com/companies/{company_id}').content,
                              features="html.parser")
 
-        current_company = {'id': company_id, 'batch': batch_name, 'data': {}}
+        current_company = {
+            'id': company_id,
+            'batch': batch_name,
+            'data': {
+                'logo_url': '',
+                'pills': {
+                    'orange': '',
+                    'industries': [],
+                    'others': []
+                },
+                'name': '',
+                'headline': '',
+                'description': '',
+                'links': [],
+                'facts': [],
+                'social_links': {},
+                'founders': [],
+                'jobs': []
+            }
+        }
 
         content = page.find('div', class_='content')
         company_info = content.find('section', class_='company-info')
@@ -76,7 +95,7 @@ def handler(event, context):
             previous_company.pop('_id', None)
 
             if previous_company != current_company:
-                diff.send(diff.COMPANY, previous_company, current_company, include_current=True)
+                diff.send(diff.COMPANY, previous_company, current_company)
 
                 deps.MONGO_DB['company_snapshots'].insert_one(current_company, session=session)
 
