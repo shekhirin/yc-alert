@@ -15,11 +15,13 @@ def handler(event, context):
     for record in event['Records']:
         data = json.loads(record['body'])
 
+        print(f'{data["kind"]}: {data["diff"]}')
+
         if data['kind'] == COMPANY:
             if not data['previous']:
                 new_company_added(data['current'])
             elif data['diff']:
-                # TODO: publish company changes using IFTTT.publish_telegram_alert and IFTTT.publish_twitter_alert
+                # TODO: publish company changes using IFTTT.publish_telegram_change and IFTTT.publish_twitter_change
                 print('COMPANY_DIFF', data['current']['id'], data['diff'])
 
 
@@ -37,12 +39,12 @@ def new_company_added(company):
             publish = True
 
     if publish:
-        print(deps.IFTTT.publish_twitter_alert(
+        print(deps.IFTTT.publish_alert_twitter(
             f'{company["data"]["name"]}{by_twitter} has just been added to {company["batch"]} batch<br><br>'
             f'More info: https://www.ycombinator.com/companies/{company["id"]}')
         )
 
-        print(deps.IFTTT.publish_telegram_alert(
+        print(deps.IFTTT.publish_alert_telegram(
             f'<a href="{company["data"]["links"][0]}">{company["data"]["name"]}</a>{by_telegram} '
             f'has just been added to {company["batch"]} batch<br><br>'
             f'More info: https://www.ycombinator.com/companies/{company["id"]}')

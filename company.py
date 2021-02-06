@@ -17,12 +17,6 @@ def handler(event, context):
 
         current_company = {'id': company_id, 'batch': batch_name, 'data': {}}
 
-        previous_company = deps.MONGO_DB['company_snapshots'].find_one({
-            '$query': {'id': company_id},
-            '$orderby': {'$natural': -1}
-        }, session=session) or {}
-        previous_company.pop('_id', None)
-
         content = page.find('div', class_='content')
         company_info = content.find('section', class_='company-info')
         main_box_items = company_info.find('div', class_='main-box').find_all('div', recursive=False)
