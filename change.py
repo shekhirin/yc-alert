@@ -1,7 +1,5 @@
 from typing import List
 
-import dictdiffer
-
 
 def generate_telegram(diffs, previous_company, current_company) -> List[str]:
     messages = []
@@ -11,17 +9,25 @@ def generate_telegram(diffs, previous_company, current_company) -> List[str]:
         'remove': []
     }
 
-    for diff in diffs:
-        job_change(diff, previous_company, current_company, jobs)
+    meta = {
+        'change': []
+    }
 
-    print(jobs)
+    for diff in diffs:
+        jobs_change(diff, previous_company, current_company, jobs)
+        meta_change(diff, previous_company, current_company, meta)
+
+    jobs['add'] = unique_dicts(jobs['add'], 'apply')
+    jobs['remove'] = unique_dicts(jobs['remove'], 'apply')
+
+    print('CHANGES:', jobs, meta)
 
     return messages
 
 
-def job_change(diff, previous_company, current_company, jobs):
+def jobs_change(diff, previous_company, current_company, jobs):
     if diff[0] == 'add':
-        if diff[1] == 'data.jobs':
+        if diff[1] == ['data', 'jobs']:
             for (_, job) in diff[2]:
                 jobs['add'].append(job)
                 # messages.append(
@@ -36,7 +42,7 @@ def job_change(diff, previous_company, current_company, jobs):
             jobs['add'].append(current_company['data']['jobs'][idx])
             jobs['remove'].append(previous_company['data']['jobs'][idx])
     elif diff[0] == 'remove':
-        if diff[1] == 'data.jobs':
+        if diff[1] == ['data', 'jobs']:
             for (_, job) in diff[2]:
                 jobs['remove'].append(job)
                 # messages.append(
@@ -44,3 +50,13 @@ def job_change(diff, previous_company, current_company, jobs):
                 #     f'has just deleted job opening for <b>{job["title"]}</b> position in <b>{job["location"]}</b> '
                 #     f'location'
                 # )
+
+
+def meta_change(diff, previous_company, current_company, meta):
+    if diff[0] == 'change':
+        if (name := diff[1][-1]) and name in ('name', 'headline', 'description'):
+            meta['change'].append({name: diff[2]})
+
+
+def unique_dicts(dicts, key):
+    return list({x[key]: x for x in dicts}.values())

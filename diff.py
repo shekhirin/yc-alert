@@ -46,7 +46,7 @@ def new_company_added(company):
 def send(kind, previous, current):
     diff = None
     try:
-        diff = list(dictdiffer.diff(previous, current))
+        diff = list(dictdiffer.diff(previous, current, dot_notation=False))
     except RecursionError as e:
         print(e, previous, current)
 
