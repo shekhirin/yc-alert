@@ -41,7 +41,7 @@ def new_company_added(company):
         deps.IFTTT.publish_telegram_alert(alert.generate_telegram(company))
 
 
-def send(kind, previous, current):
+def send(kind, previous, current, include_current=False):
     diff = None
     try:
         diff = list(dictdiffer.diff(previous, current, dot_notation=False))
@@ -52,7 +52,7 @@ def send(kind, previous, current):
         QueueUrl=os.getenv('DIFFS_SQS_URL'),
         MessageBody=json.dumps({
             'kind': kind,
-            'current': current,
+            'current': current if include_current or not current else 'exists',
             'diff': diff
         })
     )

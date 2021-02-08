@@ -45,17 +45,32 @@ def jobs_change(diffs: List[List], previous_company: dict, current_company: dict
 
     messages = []
 
-    for job in jobs['add']:
+    if len(jobs['add']) == 1:
+        job = jobs['add'][0]
+
         messages.append(
             f'<a href="{current_company["data"]["links"][0]}">{current_company["data"]["name"]}</a> '
-            f'has just added job opening for <b>{job["title"]}</b> position in <b>{job["location"]}</b><br><br>'
-            f'Apply here: {job["apply"]}'
+            f'has just added new job opening for <a href="{job["apply"]}">{job["title"]}</a> in {job["location"]}'
+        )
+    elif len(jobs['add']) > 1:
+        messages.append(
+            f'<a href="{current_company["data"]["links"][0]}">{current_company["data"]["name"]}</a> '
+            f'has just added new job openings:<br<br><br>' +
+            '<br>'.join([f'- <a href="{x["apply"]}">{x["title"]}</a> in {x["location"]}' for x in jobs['add']])
         )
 
-    for job in jobs['remove']:
+    if len(jobs['remove']) == 1:
+        job = jobs['remove'][0]
+
         messages.append(
             f'<a href="{current_company["data"]["links"][0]}">{current_company["data"]["name"]}</a> '
-            f'has just deleted job opening for <b>{job["title"]}</b> position in <b>{job["location"]}</b>location'
+            f'has just deleted job opening for {job["title"]} in {job["location"]}'
+        )
+    elif len(jobs['remove']) > 1:
+        messages.append(
+            f'<a href="{current_company["data"]["links"][0]}">{current_company["data"]["name"]}</a> '
+            f'has just deleted job openings:<br<br><br>' +
+            '<br>'.join([f'- <b>{x["title"]}</b> in {x["location"]}' for x in jobs['remove']])
         )
 
     return messages

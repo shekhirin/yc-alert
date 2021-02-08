@@ -98,7 +98,7 @@ def handler(event, context):
             previous_company.pop('_id', None)
 
             if previous_company != current_company:
-                diff.send(diff.COMPANY, previous_company, current_company)
+                diff.send(diff.COMPANY, previous_company, current_company, include_current=True)
 
                 deps.MONGO_DB['company_snapshots'].insert_one(current_company, session=session)
 
