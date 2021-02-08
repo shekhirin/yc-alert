@@ -2,7 +2,7 @@ import urlpath
 
 
 def generate_twitter(company) -> str:
-    by_twitter = by([f'@{urlpath.URL(z).parts[1]}' for x in company['data']['founders'] for y, z in
+    by_twitter = by([f'@{urlpath.URL(z).parts[1]}' for x in company['data']['active_founders'] for y, z in
                      x['social_links'].items() if y == 'twitter'])
 
     return (
@@ -12,7 +12,7 @@ def generate_twitter(company) -> str:
 
 
 def generate_telegram(company) -> str:
-    by_telegram = by([f'<a href="{z}">@{urlpath.URL(z).parts[1]}</a>' for x in company['data']['founders']
+    by_telegram = by([f'<a href="{z}">@{urlpath.URL(z).parts[1]}</a>' for x in company['data']['active_founders']
                       for y, z in x['social_links'].items() if y == 'twitter'])
 
     return (

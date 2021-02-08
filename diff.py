@@ -29,16 +29,12 @@ def handler(event, context):
 
 
 def new_company_added(company):
-    publish = False
-
     with deps.MONGO.start_session() as session, session.start_transaction():
         if not deps.MONGO_DB['company_posts'].find_one({'id': company['id']}, session=session):
             deps.MONGO_DB['company_posts'].insert_one({'id': company['id']}, session=session)
-            publish = True
 
-    if publish:
-        deps.IFTTT.publish_twitter_alert(alert.generate_twitter(company))
-        deps.IFTTT.publish_telegram_alert(alert.generate_telegram(company))
+            deps.IFTTT.publish_twitter_alert(alert.generate_twitter(company))
+            deps.IFTTT.publish_telegram_alert(alert.generate_telegram(company))
 
 
 def send(kind, previous, current, include_current=False):
