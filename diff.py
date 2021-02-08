@@ -2,7 +2,6 @@ import json
 import os
 
 import dictdiffer
-import urlpath
 
 import alert
 import change
@@ -26,8 +25,7 @@ def handler(event, context):
                 new_company_added(data['current'])
             elif data['diff']:
                 for message in change.generate_telegram(data['diff'], previous_company, data['current']):
-                    print(deps.IFTTT.publish_change_telegram(message))
-
+                    deps.IFTTT.publish_telegram_change(message)
 
 
 def new_company_added(company):
@@ -39,8 +37,8 @@ def new_company_added(company):
             publish = True
 
     if publish:
-        print(deps.IFTTT.publish_alert_twitter(alert.generate_twitter(company)))
-        print(deps.IFTTT.publish_alert_telegram(alert.generate_telegram(company)))
+        deps.IFTTT.publish_twitter_alert(alert.generate_twitter(company))
+        deps.IFTTT.publish_telegram_alert(alert.generate_telegram(company))
 
 
 def send(kind, previous, current):

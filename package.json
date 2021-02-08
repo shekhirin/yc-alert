@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "serverless-python-requirements": "^5.1.0"
+  },
+  "devDependencies": {
+    "serverless-prune-plugin": "^1.4.3"
   }
 }
