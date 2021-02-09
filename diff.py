@@ -18,7 +18,11 @@ def handler(event, context):
 
         print(f'{data["kind"]}: {data["diff"]}')
 
-        previous_company = dictdiffer.revert(data['diff'], data['current'])
+        try:
+            previous_company = dictdiffer.revert(data['diff'], data['current'])
+        except Exception as e:
+            print(e, data)
+            continue
 
         if data['kind'] == COMPANY:
             if not previous_company:
