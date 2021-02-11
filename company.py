@@ -53,9 +53,7 @@ def handler(event, context):
                     pills_items) >= 2 else []
                 pills3 = list(sorted([x.text for x in pills_items[2].find_all('span')])) if len(
                     pills_items) >= 3 else []
-                current_company['data']['pills'] = {
-                    'orange': pills_items[0].text if len(pills_items) >= 1 else []
-                }
+                current_company['data']['pills']['orange'] = pills_items[0].text if len(pills_items) >= 1 else ''
                 if len(pills_items) == 2:
                     current_company['data']['pills']['others'] = pills2
                 elif len(pills_items) == 3:
