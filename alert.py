@@ -37,4 +37,7 @@ def by(twitters):
 
 
 def transform_industry(text):
-    return text.replace(' ', '')
+    if text.endswith('(SOAR)'):
+        return 'SOAR'
+
+    return text.replace('&', 'And').replace('-', '_').replace(' ', '')
