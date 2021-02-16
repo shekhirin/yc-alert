@@ -13,7 +13,7 @@ def handler(event, context):
         company_id, batch_name = data['id'], data['batch']
 
         page = BeautifulSoup(requests.get(f'https://www.ycombinator.com/companies/{company_id}').content,
-                             features="html.parser")
+                             features='html.parser')
 
         current_company = {
             'id': company_id,

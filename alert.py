@@ -6,8 +6,9 @@ def generate_twitter(company) -> str:
                      x['social_links'].items() if y == 'twitter'])
 
     return (
-            f'{company["data"]["name"]}{by_twitter} has just been added to {company["batch"]} batch<br><br>'
-            f'More info: https://www.ycombinator.com/companies/{company["id"]}<br><br>' +
+            f'{company["data"]["name"]}{by_twitter} '
+            f'has just been added to {company["batch"]} batch: ycombinator.com/companies/{company["id"]}<br><br>' +
+            f'{company["data"]["headline"]}<br><br>' if company['data']['headline'] else '' +
             ' '.join([f'#{transform_industry(x)}' for x in company['data']['pills'].get('industries', [])])
     )
 
@@ -18,8 +19,8 @@ def generate_telegram(company) -> str:
 
     return (
             f'<a href="{company["data"]["links"][0]}">{company["data"]["name"]}</a>{by_telegram} '
-            f'has just been added to {company["batch"]} batch<br><br>'
-            f'More info: https://www.ycombinator.com/companies/{company["id"]}<br><br>' +
+            f'has just been added to {company["batch"]} batch: ycombinator.com/companies/{company["id"]}<br><br>' +
+            f'{company["data"]["headline"]}<br><br>' if company['data']['headline'] else '' +
             ' '.join([f'#{transform_industry(x)}' for x in company['data']['pills'].get('industries', [])])
     )
 
