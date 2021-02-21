@@ -25,7 +25,7 @@ def handler(event, context):
             previous_batch.pop('_id', None)
 
             if previous_batch != current_batch:
-                diff.send(diff.BATCH, previous_batch, current_batch)
+                # diff.send(diff.BATCH, previous_batch, current_batch)
 
                 deps.MONGO_DB['batch_snapshots'].insert_one(current_batch, session=session)
 

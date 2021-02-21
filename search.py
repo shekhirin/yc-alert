@@ -24,7 +24,7 @@ def handler(event, context):
         previous_facets.pop('_id', None)
 
         if previous_facets != current_facets:
-            diff.send(diff.FACETS, previous_facets, current_facets)
+            # diff.send(diff.FACETS, previous_facets, current_facets)
 
             deps.MONGO_DB['facets_snapshots'].insert_one(current_facets, session=session)
 
