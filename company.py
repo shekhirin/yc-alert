@@ -42,7 +42,7 @@ def handler(event, context):
             aside = section.find('aside').text
 
             if aside == 'About':
-                main_box_items = section.find('div', class_='main-box').find_all('div', recursive=False)
+                main_box_items = section.find('div', class_='main-column').find_all('div', recursive=False)
 
                 main_box_flex_row_items = main_box_items[0].find_all('div', recursive=False)
                 if img := main_box_flex_row_items[0].find('img'):
