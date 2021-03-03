@@ -18,14 +18,12 @@ provider:
         - Fn::GetAtt: [ BatchesQueue, Arn ]
         - Fn::GetAtt: [ CompaniesQueue, Arn ]
         - Fn::GetAtt: [ DiffsQueue, Arn ]
-        - Fn::GetAtt: [ ErrorsQueue, Arn ]
 
 functions:
   search:
     handler: search.handler
-    onError: !GetAtt ErrorsQueue.Arn
     events:
-      - schedule: rate(30 minutes)
+      - schedule: rate(1 hour)
     environment:
       BATCHES_SQS_URL:
         Ref: BatchesQueue
@@ -33,7 +31,6 @@ functions:
         Ref: DiffsQueue
   batch:
     handler: batch.handler
-    onError: !GetAtt ErrorsQueue.Arn
     events:
       - sqs:
           arn:
@@ -46,7 +43,6 @@ functions:
         Ref: DiffsQueue
   company:
     handler: company.handler
-    onError: !GetAtt ErrorsQueue.Arn
     events:
       - sqs:
           arn:
@@ -57,18 +53,11 @@ functions:
         Ref: DiffsQueue
   diff:
     handler: diff.handler
-    onError: !GetAtt ErrorsQueue.Arn
     events:
       - sqs:
           arn:
             Fn::GetAtt: [ DiffsQueue, Arn ]
           batchSize: 1
-  error:
-    handler: error.handler
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt: [ ErrorsQueue, Arn ]
 
 resources:
   Resources:
@@ -84,11 +73,6 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: Diffs
-    ErrorsQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: Errors
-        VisibilityTimeout: 60
 
 plugins:
   - serverless-python-requirements
