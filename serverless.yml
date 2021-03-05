@@ -35,7 +35,7 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt: [ BatchesQueue, Arn ]
-          batchSize: 1
+          batchSize: 10
     environment:
       COMPANIES_SQS_URL:
         Ref: CompaniesQueue
@@ -47,7 +47,7 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt: [ CompaniesQueue, Arn ]
-          batchSize: 1
+          batchSize: 10
     environment:
       DIFFS_SQS_URL:
         Ref: DiffsQueue
@@ -57,7 +57,7 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt: [ DiffsQueue, Arn ]
-          batchSize: 1
+          batchSize: 10
 
 resources:
   Resources:
