@@ -23,7 +23,7 @@ functions:
   search:
     handler: search.handler
     events:
-      - schedule: rate(1 hour)
+      - schedule: rate(6 hours)
     environment:
       BATCHES_SQS_URL:
         Ref: BatchesQueue
