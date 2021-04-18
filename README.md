@@ -1,1 +1,1 @@
-# yc-alerts
+# yc-alert
