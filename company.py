@@ -102,15 +102,18 @@ def handler(event, context):
 
 
 def extract_social_links(element):
+    if not element:
+        return {}
+
     return {x['class'][1]: x['href'] for x in element.find_all('a')}
 
 
 def extract_founders(element):
     if (founders_info := element.find_all('div', class_='founder-info')) and len(founders_info) > 0:
         return list(sorted([{
-            'name': x.find('h3').text,
-            'description': x.find('p', class_='pre-line').text,
-            'thumb_url': x.find('img')['src'],
+            'name': x.find('h3').text if x.find('h3') else '',
+            'description': x.find('p', class_='pre-line').text if x.find('p', class_='pre-line') else '',
+            'thumb_url': x.find('img')['src'] if x.find('img') else '',
             'social_links': extract_social_links(x.find('div', class_='social-links'))
         } for x in founders_info], key=lambda x: x['name']))
     else:
