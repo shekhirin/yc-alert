@@ -31,10 +31,11 @@ def handler(event, context):
 
         for hit in hits:
             hit_id = hit.get('id')
-            if not hit_id:
+            hit_slug = hit.get('slug')
+            if not (hit_id and hit_slug):
                 continue
 
             deps.SQS.send_message(
                 QueueUrl=os.getenv('COMPANIES_SQS_URL'),
-                MessageBody=json.dumps({'id': hit_id, 'batch': batch_name})
+                MessageBody=json.dumps({'id': hit_id, 'slug': hit_slug, 'batch': batch_name})
             )

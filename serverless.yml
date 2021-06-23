@@ -65,14 +65,17 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: Batches
+        VisibilityTimeout: 60
     CompaniesQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: Companies
+        VisibilityTimeout: 60
     DiffsQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: Diffs
+        VisibilityTimeout: 60
 
 plugins:
   - serverless-python-requirements

@@ -10,13 +10,14 @@ import diff
 def handler(event, context):
     for record in event['Records']:
         data = json.loads(record['body'])
-        company_id, batch_name = data['id'], data['batch']
+        company_id, company_slug, batch_name = data['id'], data['slug'], data['batch']
 
-        page = BeautifulSoup(requests.get(f'https://www.ycombinator.com/companies/{company_id}').content,
+        page = BeautifulSoup(requests.get(f'https://www.ycombinator.com/companies/{company_slug}').content,
                              features='html.parser')
 
         current_company = {
             'id': company_id,
+            'slug': company_slug,
             'batch': batch_name,
             'data': {
                 'logo_url': '',
