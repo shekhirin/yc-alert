@@ -7,7 +7,7 @@ def generate_twitter(company) -> str:
 
     long_message = (
             f'{company["data"]["name"]}{by_twitter} '
-            f'has just been added to {company["batch"]} batch: ycombinator.com/companies/{company["id"]}<br><br>' +
+            f'has just been added to {company["batch"]} batch: ycombinator.com/companies/{company["slug"]}<br><br>' +
             (f'{company["data"]["headline"]}<br><br>' if company['data']['headline'] else '') +
             ' '.join([f'#{transform_industry(x)}' for x in company['data']['pills'].get('industries', [])])
     )
@@ -15,7 +15,7 @@ def generate_twitter(company) -> str:
     if len(long_message) > 280:
         return (
                 f'{company["data"]["name"]}{by_twitter} '
-                f'has just been added to {company["batch"]} batch: ycombinator.com/companies/{company["id"]}<br><br>' +
+                f'has just been added to {company["batch"]} batch: ycombinator.com/companies/{company["slug"]}<br><br>' +
                 ' '.join([f'#{transform_industry(x)}' for x in company['data']['pills'].get('industries', [])])
         )
 
@@ -28,7 +28,7 @@ def generate_telegram(company) -> str:
 
     return (
             f'<a href="{company["data"]["links"][0]}">{company["data"]["name"]}</a>{by_telegram} '
-            f'has just been added to {company["batch"]} batch: ycombinator.com/companies/{company["id"]}<br><br>' +
+            f'has just been added to {company["batch"]} batch: ycombinator.com/companies/{company["slug"]}<br><br>' +
             (f'{company["data"]["headline"]}<br><br>' if company['data']['headline'] else '') +
             ' '.join([f'#{transform_industry(x)}' for x in company['data']['pills'].get('industries', [])])
     )
