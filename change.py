@@ -85,14 +85,23 @@ def meta_change(diffs: List[List], previous_company: dict, current_company: dict
 
     for diff in diffs:
         if diff[0] == 'change':
-            if (name := diff[1][-1]) and diff[1] in (['data', 'name'], ['data', 'headline'], ['data', 'description']):
+            diff_field = diff[1][:2]
+            diff_field_name = diff_field[-1]
+            if diff_field in (
+                    ['data', 'pills'],
+                    ['data', 'name'],
+                    ['data', 'headline'],
+                    ['data', 'description'],
+                    ['data', 'active_founders'],
+                    ['data', 'former_founders']
+            ):
                 previous, current = diff[2]
                 if not previous:
-                    meta['add'][name] = diff[2]
+                    meta['add'][diff_field_name] = diff[2]
                 elif not current:
-                    meta['remove'][name] = diff[2]
+                    meta['remove'][diff_field_name] = diff[2]
                 else:
-                    meta['change'][name] = diff[2]
+                    meta['change'][diff_field_name] = diff[2]
 
     print('META:', meta)
 
