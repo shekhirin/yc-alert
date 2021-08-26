@@ -27,9 +27,9 @@ def handler(event, context):
         if data['kind'] == COMPANY:
             if not previous_company:
                 new_company_added(data['current'])
-            # elif data['diff']:
-            #     for message in change.generate_telegram(data['diff'], previous_company, data['current']):
-            #         deps.IFTTT.publish_telegram_change(message)
+            elif data['diff']:
+                for message in change.generate_telegram(data['diff'], previous_company, data['current']):
+                    deps.IFTTT.publish_telegram_change(message)
 
 
 def new_company_added(company):
