@@ -84,24 +84,31 @@ def meta_change(diffs: List[List], previous_company: dict, current_company: dict
     }
 
     for diff in diffs:
+        diff_field = diff[1]
         if diff[0] == 'change':
-            diff_field = diff[1][:2]
-            diff_field_name = diff_field[-1]
-            if diff_field in (
-                    ['data', 'pills'],
-                    ['data', 'name'],
-                    ['data', 'headline'],
-                    ['data', 'description'],
-                    ['data', 'active_founders'],
-                    ['data', 'former_founders']
-            ):
+            if len(diff_field) >= 2 and diff_field[1] in ('name', 'headline', 'description'):
                 previous, current = diff[2]
                 if not previous:
-                    meta['add'][diff_field_name] = diff[2]
+                    meta['add'][diff_field[0]] = diff[2]
                 elif not current:
-                    meta['remove'][diff_field_name] = diff[2]
+                    meta['remove'][diff_field[0]] = diff[2]
                 else:
-                    meta['change'][diff_field_name] = diff[2]
+                    meta['change'][diff_field[0]] = diff[2]
+            elif len(diff_field) >= 3 and diff_field[1:3] in (['pills', 'industries'], ['pills', 'others']):
+                previous, current = previous_company['data']['pills'][diff_field[2]], current_company['data']['pills'][diff_field[2]]
+                key = f'{diff_field[2].capitalize()} {diff_field[1].capitalize()}'
+                if not previous:
+                    meta['add'][key] = (None, ', '.join(current))
+                elif not current:
+                    meta['remove'][key] = (', '.join(previous), None)
+                else:
+                    meta['change'][key] = (', '.join(previous), ', '.join(current))
+
+        # else:
+        #     if diff_field_name in ('pills', 'active_founders', 'former_founders'):
+
+
+
 
     print('META:', meta)
 
