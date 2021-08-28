@@ -29,7 +29,8 @@ def handler(event, context):
             deps.MONGO_DB['facets_snapshots'].insert_one(current_facets, session=session)
 
     for batch_name, count in current_facets.get('batch', {}).items():
-        if (previous_count := previous_facets.get('batch', {}).get(batch_name)) and previous_count != count:
+        # if (previous_count := previous_facets.get('batch', {}).get(batch_name)) and previous_count != count:
+        if True:
             deps.SQS.send_message(
                 QueueUrl=os.getenv('BATCHES_SQS_URL'),
                 MessageBody=batch_name
