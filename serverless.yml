@@ -1,23 +1,27 @@
 service: yc-alerts
+variablesResolutionMode: 20210326
 frameworkVersion: '2'
 
 provider:
   name: aws
+  lambdaHashingVersion: 20201221
   runtime: python3.8
   timeout: 60
   environment:
     ALGOLIA_APPLICATION_ID: 45BWZJ1SGC
     ALGOLIA_API_KEY: Zjk5ZmFjMzg2NmQxNTA0NGM5OGNiNWY4MzQ0NDUyNTg0MDZjMzdmMWY1NTU2YzZkZGVmYjg1ZGZjMGJlYjhkN3Jlc3RyaWN0SW5kaWNlcz1ZQ0NvbXBhbnlfcHJvZHVjdGlvbiZ0YWdGaWx0ZXJzPSU1QiUyMnljZGNfcHVibGljJTIyJTVEJmFuYWx5dGljc1RhZ3M9JTVCJTIyeWNkYyUyMiU1RA==
-    MONGO_URL: ${ssm:/yc-alerts-mongo-url~true}
-    IFTTT_TOKEN: ${ssm:/yc-alerts-ifttt-token~true}
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "sqs:SendMessage"
-      Resource:
-        - Fn::GetAtt: [ BatchesQueue, Arn ]
-        - Fn::GetAtt: [ CompaniesQueue, Arn ]
-        - Fn::GetAtt: [ DiffsQueue, Arn ]
+    MONGO_URL: ${ssm:/yc-alerts-mongo-url}
+    IFTTT_TOKEN: ${ssm:/yc-alerts-ifttt-token}
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "sqs:SendMessage"
+          Resource:
+            - Fn::GetAtt: [ BatchesQueue, Arn ]
+            - Fn::GetAtt: [ CompaniesQueue, Arn ]
+            - Fn::GetAtt: [ DiffsQueue, Arn ]
 
 functions:
   search:
