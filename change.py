@@ -89,11 +89,11 @@ def meta_change(diffs: List[List], previous_company: dict, current_company: dict
             if len(diff_field) >= 2 and diff_field[1] in ('name', 'headline', 'description'):
                 previous, current = diff[2]
                 if not previous:
-                    meta['add'][diff_field[0]] = diff[2]
+                    meta['add'][diff_field[1]] = diff[2]
                 elif not current:
-                    meta['remove'][diff_field[0]] = diff[2]
+                    meta['remove'][diff_field[1]] = diff[2]
                 else:
-                    meta['change'][diff_field[0]] = diff[2]
+                    meta['change'][diff_field[1]] = diff[2]
             elif len(diff_field) >= 3 and diff_field[1:3] in (['pills', 'industries'], ['pills', 'others']):
                 previous, current = previous_company['data']['pills'][diff_field[2]], current_company['data']['pills'][diff_field[2]]
                 key = f'{diff_field[2].capitalize()} {diff_field[1].capitalize()}'
