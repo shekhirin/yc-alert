@@ -82,12 +82,12 @@ def handler(event, context):
             elif aside == 'Former Founders':
                 current_company['data']['former_founders'] = extract_founders(section)
             elif aside == 'Open Jobs':
-                if job_openings := section.find('table', class_='job-openings'):
+                if job_openings := section.find('div', class_='job-openings'):
                     current_company['data']['jobs'] = [{
-                        'title': x.find('td', class_='job-title').text,
-                        'location': x.find('td', class_='job-location').text,
-                        'apply': x.find('td', class_='job-apply').find('a')['href']
-                    } for x in job_openings.find_all('tr')]
+                        'title': x.find('div', class_='job-title').text,
+                        'detail': x.find('div', class_='job-detail').text,
+                        'apply': x.find('div', class_='job-apply').find('a')['href']
+                    } for x in job_openings.find_all('div', class_='job')]
 
         with deps.MONGO.start_session() as session, session.start_transaction():
             previous_company = deps.MONGO_DB['company_snapshots'].find_one({
