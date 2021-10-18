@@ -3,7 +3,7 @@ from typing import List, Callable
 
 def generate_telegram(diffs, previous_company, current_company) -> List[str]:
     change_functions: List[Callable[[List[List], dict, dict], List[str]]] = [
-        jobs_change,
+        # jobs_change,
         meta_change
     ]
 
